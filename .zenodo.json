@@ -1,0 +1,28 @@
+{
+  "title": "StageGuard: Physiologically Constrained Sleep Staging",
+  "description": "Official implementation of the KDD 2026 AI4Sciences paper 'StageGuard: Physiologically Constrained Sleep Staging'. StageGuard is a plug-and-play, backbone-agnostic structured-inference framework that wraps any neural sleep-staging backbone with physiology-informed priors: a differentiable soft transition penalty during training and a semi-Markov constrained decoder at inference. The repository bundles a small subset of Sleep-Accel PSG hypnograms (labels only) under the ODC-By license for the demo notebook.",
+  "license": "MIT",
+  "upload_type": "software",
+  "access_right": "open",
+  "creators": [
+    {"name": "Wang, Juntang", "affiliation": "Zu Chongzhi Center, Duke Kunshan University"},
+    {"name": "Wang, Yihan", "affiliation": "Zu Chongzhi Center, Duke Kunshan University"},
+    {"name": "Wu, Hao", "affiliation": "Zu Chongzhi Center, Duke Kunshan University"},
+    {"name": "Gao, Jiayu", "affiliation": "Zu Chongzhi Center, Duke Kunshan University"},
+    {"name": "Xu, Shixin", "affiliation": "Zu Chongzhi Center, Duke Kunshan University"},
+    {"name": "Zou, Dongmian", "affiliation": "Zu Chongzhi Center, Duke Kunshan University"}
+  ],
+  "keywords": [
+    "sleep staging",
+    "physiological constraints",
+    "semi-Markov model",
+    "temporal consistency",
+    "constrained decoding",
+    "deep learning",
+    "KDD 2026"
+  ],
+  "related_identifiers": [
+    {"identifier": "10.1145/3770855.3818916", "relation": "isSupplementTo", "scheme": "doi"},
+    {"identifier": "10.13026/hmhs-py35", "relation": "references", "scheme": "doi"}
+  ]
+}

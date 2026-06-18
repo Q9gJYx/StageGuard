@@ -4,11 +4,27 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "stageguard"
-version = "0.1.0"
+version = "1.0.0"
 description = "Backbone-agnostic physiological constraints for neural sleep staging"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
+authors = [
+    {name = "Juntang Wang", email = "jw853@duke.edu"},
+    {name = "Yihan Wang", email = "yw572@duke.edu"},
+    {name = "Hao Wu", email = "hw412@duke.edu"},
+    {name = "Jiayu Gao", email = "jg563@duke.edu"},
+    {name = "Shixin Xu", email = "shixin.xu@duke.edu"},
+    {name = "Dongmian Zou", email = "dongmian.zou@duke.edu"},
+]
+keywords = [
+    "sleep staging",
+    "physiological constraints",
+    "semi-Markov model",
+    "temporal consistency",
+    "constrained decoding",
+    "deep learning",
+]
 dependencies = [
     "torch>=2.0",
     "numpy>=1.24",
@@ -21,6 +37,12 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=7.3"]
+demo = ["matplotlib>=3.7", "jupyter"]
+
+[project.urls]
+Homepage = "https://github.com/Q9gJYx/StageGuard"
+Repository = "https://github.com/Q9gJYx/StageGuard"
+Paper = "https://doi.org/10.1145/3770855.3818916"
 
 [tool.setuptools.packages.find]
 include = ["stageguard*"]

@@ -1,0 +1,33 @@
+# Sleep-Accel (demo) -- wrist-PSG hypnograms, 3-state collapse
+# Dataset: https://physionet.org/content/sleep-accel/1.0.0/  (Walch et al. 2019, ODC-By)
+# Demo config for notebooks/demo_stageguard.ipynb. Uses the PSG gold-standard
+# hypnograms collapsed to 3 states (Wake / NREM / REM) at 30-second epochs.
+# NOTE: distinct from configs/actigraphy.yaml (2-state Wake/Sleep) -- this 3-state
+#       scheme showcases the rare-transition and minimum-duration constraints.
+
+dataset_name: Sleep-Accel (demo, 3-state)
+dataset_url: https://physionet.org/content/sleep-accel/1.0.0/
+
+stage_names: [Wake, NREM, REM]
+num_classes: 3
+epoch_sec: 30.0
+
+# Direct Wake<->REM is physiologically rare in humans
+rare_transitions:
+  - [0, 2]  # Wake -> REM
+  - [2, 0]  # REM -> Wake
+
+lambda_trans: 1.0
+
+# Semi-Markov decoder
+d_max: 30
+epsilon: 5.0
+gamma: 2.0
+k: 5
+d_min: [1, 2, 2]  # Wake >= 1 epoch (30s), NREM >= 2 (60s), REM >= 2 (60s);
+                  # chosen so < 2% of true epochs fall in sub-d_min bouts across
+                  # the shipped demo subjects (see data/README.md)
+
+# Signal quality
+sqi_method: acceleration_variance
+sqi_threshold: 0.3

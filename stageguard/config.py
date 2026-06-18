@@ -61,6 +61,6 @@ class ModalityConfig:
     def from_yaml(cls, path: str | Path) -> "ModalityConfig":
         """Load configuration from a YAML file."""
         path = Path(path)
-        with open(path) as f:
+        with open(path, encoding="utf-8") as f:
             data = yaml.safe_load(f)
         return cls(**data)

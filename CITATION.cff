@@ -1,0 +1,67 @@
+cff-version: 1.2.0
+message: "If you use StageGuard in your research, please cite the KDD 2026 paper below."
+title: "StageGuard: Physiologically Constrained Sleep Staging"
+type: software
+license: MIT
+repository-code: "https://github.com/Q9gJYx/StageGuard"
+url: "https://doi.org/10.1145/3770855.3818916"
+# doi: 10.5281/zenodo.XXXXXXXX   # add the archival Zenodo DOI after the release is deposited
+abstract: >-
+  StageGuard is a plug-and-play, backbone-agnostic structured-inference framework that wraps any neural
+  sleep-staging model with physiology-informed priors: a differentiable soft transition penalty during
+  training and a semi-Markov constrained decoder at inference.
+keywords:
+  - sleep staging
+  - physiological constraints
+  - semi-Markov model
+  - temporal consistency
+  - constrained decoding
+  - deep learning
+authors:
+  - family-names: Wang
+    given-names: Juntang
+    affiliation: "Zu Chongzhi Center, Duke Kunshan University"
+    email: "jw853@duke.edu"
+  - family-names: Wang
+    given-names: Yihan
+    affiliation: "Zu Chongzhi Center, Duke Kunshan University"
+    email: "yw572@duke.edu"
+  - family-names: Wu
+    given-names: Hao
+    affiliation: "Zu Chongzhi Center, Duke Kunshan University"
+    email: "hw412@duke.edu"
+  - family-names: Gao
+    given-names: Jiayu
+    affiliation: "Zu Chongzhi Center, Duke Kunshan University"
+    email: "jg563@duke.edu"
+  - family-names: Xu
+    given-names: Shixin
+    affiliation: "Zu Chongzhi Center, Duke Kunshan University"
+    email: "shixin.xu@duke.edu"
+  - family-names: Zou
+    given-names: Dongmian
+    affiliation: "Zu Chongzhi Center, Duke Kunshan University"
+    email: "dongmian.zou@duke.edu"
+preferred-citation:
+  type: conference-paper
+  title: "StageGuard: Physiologically Constrained Sleep Staging"
+  year: 2026
+  collection-title: "Proceedings of the 32nd ACM SIGKDD Conference on Knowledge Discovery and Data Mining V.2 (KDD '26)"
+  doi: "10.1145/3770855.3818916"
+  conference:
+    name: "ACM SIGKDD Conference on Knowledge Discovery and Data Mining (KDD)"
+    city: "Jeju Island"
+    country: "KR"
+  authors:
+    - family-names: Wang
+      given-names: Juntang
+    - family-names: Wang
+      given-names: Yihan
+    - family-names: Wu
+      given-names: Hao
+    - family-names: Gao
+      given-names: Jiayu
+    - family-names: Xu
+      given-names: Shixin
+    - family-names: Zou
+      given-names: Dongmian
