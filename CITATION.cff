@@ -7,7 +7,7 @@ version: 1.0.0
 date-released: "2026-06-23"
 repository-code: "https://github.com/Q9gJYx/StageGuard"
 url: "https://doi.org/10.1145/3770855.3818916"
-# doi: 10.5281/zenodo.XXXXXXXX   # add the archival Zenodo DOI after the release is deposited
+doi: 10.5281/zenodo.20807354
 abstract: >-
   StageGuard is a plug-and-play, backbone-agnostic structured-inference framework that wraps any neural
   sleep-staging backbone with physiology-informed priors: a differentiable soft transition penalty during
