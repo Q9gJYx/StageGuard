@@ -15,11 +15,11 @@ from scipy import signal as sig
 def spectral_entropy(x: np.ndarray, fs: float = 256.0, **kwargs) -> float:
     """SQI for EEG: normalized spectral entropy.
 
-    Low entropy → dominated by a few frequencies (good rhythmic EEG).
-    High entropy → flat spectrum (noisy / artifact-heavy).
-    We invert so that high quality → high SQI.
+    Low entropy -> dominated by a few frequencies (good rhythmic EEG).
+    High entropy -> flat spectrum (noisy / artifact-heavy).
+    We invert so that high quality -> high SQI.
     """
-    freqs, psd = sig.welch(x, fs=fs, nperseg=min(len(x), 256))
+    _, psd = sig.welch(x, fs=fs, nperseg=min(len(x), 256))
     psd = psd / (psd.sum() + 1e-12)
     entropy = -np.sum(psd * np.log(psd + 1e-12))
     max_entropy = np.log(len(psd) + 1e-12)
@@ -33,9 +33,9 @@ def acceleration_variance(x: np.ndarray, **kwargs) -> float:
     Very low or very high variance suggests sensor detachment or artifact.
     """
     var = np.var(x)
-    # Sigmoid-like mapping: moderate variance → high quality
+    # Sigmoid-like mapping: moderate variance -> high quality
     quality = float(2.0 / (1.0 + np.exp(-0.5 * var)) - 1.0)
-    return np.clip(quality, 0.0, 1.0)
+    return float(np.clip(quality, 0.0, 1.0))
 
 
 def rr_interval_quality(x: np.ndarray, **kwargs) -> float:
@@ -50,9 +50,9 @@ def rr_interval_quality(x: np.ndarray, **kwargs) -> float:
     if mean_diff < 1e-12:
         return 1.0
     cv = np.std(diffs) / mean_diff
-    # Lower CV → better quality
+    # Lower CV -> better quality
     quality = float(np.exp(-cv))
-    return np.clip(quality, 0.0, 1.0)
+    return float(np.clip(quality, 0.0, 1.0))
 
 
 def signal_amplitude(x: np.ndarray, **kwargs) -> float:
@@ -65,7 +65,7 @@ def signal_amplitude(x: np.ndarray, **kwargs) -> float:
         return 0.0
     # Saturating mapping
     quality = float(1.0 - np.exp(-amp))
-    return np.clip(quality, 0.0, 1.0)
+    return float(np.clip(quality, 0.0, 1.0))
 
 
 # --- Dispatcher ---

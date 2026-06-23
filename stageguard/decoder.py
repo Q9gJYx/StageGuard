@@ -74,12 +74,12 @@ class SemiMarkovDecoder:
                 for d in range(1, D + 1):
                     src = self._aug_index(s_prev, s, d)
 
-                    # --- Stay in same state: (s_prev, s, d) → (s_prev, s, min(d+1, D)) ---
+                    # --- Stay in same state: (s_prev, s, d) -> (s_prev, s, min(d+1, D)) ---
                     d_next = min(d + 1, D)
                     dst_stay = self._aug_index(s_prev, s, d_next)
                     self.valid_trans[dst_stay].append((src, 0.0))
 
-                    # --- Switch to different state: (s_prev, s, d) → (s, s', 1) ---
+                    # --- Switch to different state: (s_prev, s, d) -> (s, s', 1) ---
                     if d < self.d_min[s]:
                         continue  # Cannot leave before d_min
 

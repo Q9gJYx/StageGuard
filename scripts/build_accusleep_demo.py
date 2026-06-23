@@ -1,9 +1,11 @@
 """Reproducible build of the local AccuSleep demo artifact.
 
-Downloads one mouse recording from the public AccuSleep OSF project and transforms it
-the same way the demo notebook does, writing ``data/accusleep_demo.npz`` in the format
+Downloads one mouse recording from the public AccuSleep OSF project and applies the same
+load + decimate + epoch + stage-remap steps the demo notebook uses, for the held-out
+night, writing raw (un-normalized) epochs to ``data/accusleep_demo.npz`` in the format
 expected by ``stageguard.data.AccuSleepDataset`` (keys ``eeg`` of shape
-``(n_epochs, samples_per_epoch)`` and ``labels`` of shape ``(n_epochs,)``).
+``(n_epochs, samples_per_epoch)`` and ``labels`` of shape ``(n_epochs,)``). The notebook's
+four-night training split and train-statistic z-scoring are not reproduced here.
 
 Nothing this script produces is committed: the AccuSleep recordings carry no
 redistribution license, so both the download cache (``accusleep_data/``) and the output

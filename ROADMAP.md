@@ -25,7 +25,8 @@ paper's tables, plus exact-version environment locks and per-run seeds.
 ## Packaging and distribution
 
 - Publish to PyPI (`pip install stageguard`).
-- Archive each tagged release on Zenodo for a citable DOI.
+- The `v1.0.0-kdd2026` snapshot is archived on Zenodo for a citable DOI; subsequent tagged releases will be
+  archived the same way.
 
 ## More modalities and configs
 

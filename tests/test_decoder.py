@@ -1,8 +1,8 @@
 """Tests for the Semi-Markov decoder."""
 
 import numpy as np
-import pytest
 
+from stageguard.config import ModalityConfig
 from stageguard.decoder import SemiMarkovDecoder
 
 
@@ -68,8 +68,6 @@ class TestSemiMarkovDecoder:
 
     def test_anti_flip_flop(self):
         """γ penalty should suppress short detours back to a previous stage."""
-        from stageguard.config import ModalityConfig
-
         # Config WITHOUT anti-flip-flop (γ=0)
         cfg_no_afp = ModalityConfig(
             stage_names=["W", "N", "R"], num_classes=3,
@@ -90,7 +88,7 @@ class TestSemiMarkovDecoder:
         log_probs[:, 0] = 0.0  # Stage 0 strongly preferred everywhere
 
         # Slight preference for stage 1 at positions 8-9 (2 epochs = d_min)
-        # Emission advantage = 2*0.3 - 2*(-0.3) = 1.2 < γ=2.0
+        # Emission advantage = 2 epochs x (0.3 - (-0.3)) = 1.2 total, below γ=2.0
         log_probs[8:10, 1] = 0.3
         log_probs[8:10, 0] = -0.3
 
@@ -101,26 +99,29 @@ class TestSemiMarkovDecoder:
         assert result_no_afp[8] == 1 and result_no_afp[9] == 1, (
             f"Expected flip-flop without γ, got {result_no_afp[7:11]}"
         )
-        # With γ=2.0, the penalty outweighs the emission gain → stays in 0
+        # With γ=2.0, the penalty outweighs the emission gain -> stays in 0
         assert result_afp[8] == 0 and result_afp[9] == 0, (
             f"Expected no flip-flop with γ, got {result_afp[7:11]}"
         )
 
     def test_sqi_damping(self, dummy_config):
-        """Low SQI should push predictions toward uniform."""
+        """Zero SQI damps emissions to uniform, so the input log-probs are ignored."""
         decoder = SemiMarkovDecoder(dummy_config)
         T, C = 20, 3
-        # Strong preference for class 0
-        log_probs = np.full((T, C), -10.0)
-        log_probs[:, 0] = 0.0
+        lp_class0 = np.full((T, C), -10.0)
+        lp_class0[:, 0] = 0.0
+        lp_class2 = np.full((T, C), -10.0)
+        lp_class2[:, 2] = 0.0
 
-        # With perfect SQI
-        result_high = decoder.decode(log_probs, sqi_scores=np.ones(T))
-        # With zero SQI (uniform emissions)
-        result_low = decoder.decode(log_probs, sqi_scores=np.zeros(T))
+        # With full trust (SQI=1) the decoder follows the emissions.
+        assert np.all(decoder.decode(lp_class0, sqi_scores=np.ones(T)) == 0)
+        assert np.all(decoder.decode(lp_class2, sqi_scores=np.ones(T)) == 2)
 
-        # High SQI should produce class 0; low SQI is more uncertain
-        assert np.all(result_high == 0)
+        # With zero SQI, emissions become uniform regardless of input, so two
+        # very different inputs decode to the same path.
+        low0 = decoder.decode(lp_class0, sqi_scores=np.zeros(T))
+        low2 = decoder.decode(lp_class2, sqi_scores=np.zeros(T))
+        assert np.array_equal(low0, low2)
 
     def test_binary_config(self, binary_config):
         """Works with 2-class, no rare transitions."""

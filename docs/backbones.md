@@ -62,7 +62,7 @@ from YAML with `ModalityConfig.from_yaml(path)`. Fields:
 | `k` | int | 5 | flip-flop look-back window (epochs) |
 | `d_min` | list[int] | [] | minimum bout duration per stage (epochs); `len` must equal `num_classes` if set |
 | `sqi_method` | str | "spectral_entropy" | SQI function name (see `stageguard/sqi.py`) |
-| `sqi_threshold` | float | 0.5 | documentary threshold for the modality |
+| `sqi_threshold` | float | 0.5 | advisory quality threshold (metadata; the decoder damps emissions continuously by SQI, not by thresholding) |
 | `epoch_sec` | float | 30.0 | epoch length in seconds |
 | `dataset_name`, `dataset_url` | str / None | None | optional metadata |
 

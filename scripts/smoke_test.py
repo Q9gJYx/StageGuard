@@ -63,7 +63,7 @@ def main() -> None:
     assert pred.shape == (4, T), f"predict shape {pred.shape}"
     assert pred.min() >= 0 and pred.max() < cfg.num_classes, "predict labels out of range"
     print(f"predict OK: shape={pred.shape} labels in [0, {cfg.num_classes - 1}]")
-    print("smoke test passed")
+    print("Smoke test passed.")
 
 
 if __name__ == "__main__":

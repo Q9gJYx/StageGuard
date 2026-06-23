@@ -1,7 +1,9 @@
 """End-to-end demo with synthetic data.
 
-Shows: forward pass → loss computation → constrained decoding → metrics.
+Shows: forward pass -> loss computation -> constrained decoding -> metrics.
 """
+
+from __future__ import annotations
 
 import numpy as np
 import torch
@@ -54,13 +56,13 @@ def main():
     cls_metrics = classification_metrics(y_true, y_pred, config.stage_names)
     arch = sleep_architecture(y_pred, epoch_sec=config.epoch_sec, stage_names=config.stage_names)
 
-    print(f"\n--- Metrics ---")
+    print("\n--- Metrics ---")
     print(f"TVR:  {tvr:.4f}")
     print(f"FI:   {fi:.4f}")
     print(f"Acc:  {cls_metrics['accuracy']:.4f}")
     print(f"Kappa: {cls_metrics['kappa']:.4f}")
     print(f"F1:   {cls_metrics['macro_f1']:.4f}")
-    print(f"\n--- Sleep Architecture ---")
+    print("\n--- Sleep Architecture ---")
     for k, v in arch.items():
         print(f"  {k}: {v:.2f}")
 

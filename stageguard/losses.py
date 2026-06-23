@@ -16,9 +16,10 @@ import torch.nn.functional as F
 class SoftTransitionPenalty(nn.Module):
     """Penalizes rare sleep-stage transitions in the softmax probability space.
 
-    L_trans = (1 / (T-1)) * Σ_t Σ_{(s,s')∈R} p(y_{t-1}=s) * p(y_t=s')
+    L_trans = (1 / (B(T-1))) * Σ_b Σ_t Σ_{(s,s')∈R} p(y_{t-1}=s) * p(y_t=s')
 
-    where R is the set of rare transitions and p = softmax(logits).
+    where R is the set of rare transitions and p = softmax(logits); the
+    penalty is averaged over the batch B and the (T-1) transitions.
     """
 
     def __init__(self, rare_transitions: List[Tuple[int, int]]) -> None:

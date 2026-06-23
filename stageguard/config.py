@@ -34,7 +34,7 @@ class ModalityConfig:
 
     # --- Signal quality ---
     sqi_method: str = "spectral_entropy"
-    sqi_threshold: float = 0.5
+    sqi_threshold: float = 0.5  # advisory metadata; not consumed by the decoder
 
     # --- Epoch ---
     epoch_sec: float = 30.0

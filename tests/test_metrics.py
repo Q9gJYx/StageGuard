@@ -17,10 +17,10 @@ class TestTransitionViolationRate:
         assert tvr == 0.0
 
     def test_known_violations(self):
-        # Transitions: 0→2, 2→1, 1→0
+        # Transitions: 0->2, 2->1, 1->0
         preds = np.array([0, 2, 1, 0])
         tvr = transition_violation_rate(preds, [(0, 2), (2, 0)])
-        # 1 violation (0→2) out of 3 transitions
+        # 1 violation (0->2) out of 3 transitions
         assert abs(tvr - 1 / 3) < 1e-10
 
     def test_all_violations(self):
@@ -65,6 +65,13 @@ class TestClassificationMetrics:
         assert "f1_Wake" in m
         assert "f1_Sleep" in m
 
+    def test_without_stage_names(self):
+        y_true = np.array([0, 1, 0, 1])
+        y_pred = np.array([0, 0, 0, 1])
+        m = classification_metrics(y_true, y_pred)
+        assert "f1_class_0" in m
+        assert "f1_class_1" in m
+
     def test_accuracy_range(self):
         y_true = np.array([0, 1, 2, 0, 1])
         y_pred = np.array([0, 0, 2, 1, 1])
@@ -97,3 +104,20 @@ class TestSleepArchitecture:
         preds = np.array([1, 1, 0, 1, 1])
         stats = sleep_architecture(preds, epoch_sec=60.0, wake_label=0)
         assert stats["waso_min"] == 1.0  # 1 epoch * 60s = 1 min
+
+    def test_mean_bout_per_stage_with_names(self):
+        # Wake bout of 2 epochs, then a NREM bout of 3 epochs, at 60 s/epoch.
+        preds = np.array([0, 0, 1, 1, 1])
+        stats = sleep_architecture(
+            preds, epoch_sec=60.0, wake_label=0, stage_names=["Wake", "NREM", "REM"]
+        )
+        assert stats["mean_bout_Wake_min"] == 2.0
+        assert stats["mean_bout_NREM_min"] == 3.0
+
+    def test_mean_bout_fallback_labels_by_stage_id(self):
+        # Without stage_names, labels use the raw stage id even when a stage is
+        # absent (stage 0 missing here), so keys must not collide.
+        preds = np.array([1, 1, 2, 2, 2])
+        stats = sleep_architecture(preds, epoch_sec=60.0, wake_label=0)
+        assert "mean_bout_1_min" in stats
+        assert "mean_bout_2_min" in stats

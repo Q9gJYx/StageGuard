@@ -39,10 +39,10 @@ def transition_violation_rate(
 
 
 def fragmentation_index(predictions: np.ndarray) -> float:
-    """Number of stage transitions per hour of recording.
+    """Stage transitions per epoch (epoch-agnostic fragmentation index).
 
-    FI = n_transitions / (T * epoch_duration_hours). We report raw count
-    normalized by number of epochs for epoch-agnostic comparison.
+    We report the raw transition count normalized by the number of epochs,
+    so the value does not depend on epoch length.
 
     Args:
         predictions: (T,) integer predictions.
@@ -154,9 +154,11 @@ def sleep_architecture(
     }
 
     # Mean bout duration per stage
-    names = stage_names or [str(s) for s in sorted(bout_durations.keys())]
     for stage_idx, bouts in bout_durations.items():
-        label = names[stage_idx] if stage_idx < len(names) else str(stage_idx)
+        if stage_names is not None and stage_idx < len(stage_names):
+            label = stage_names[stage_idx]
+        else:
+            label = str(stage_idx)
         stats[f"mean_bout_{label}_min"] = float(np.mean(bouts))
 
     return stats
