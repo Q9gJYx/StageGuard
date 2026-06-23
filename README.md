@@ -6,8 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-ee4c2c.svg)](https://pytorch.org)
-<!-- After depositing the release on Zenodo, add the archival DOI badge here:
-[![Zenodo](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXXX) -->
+[![Zenodo](https://zenodo.org/badge/DOI/10.5281/zenodo.20807354.svg)](https://doi.org/10.5281/zenodo.20807354)
 
 Official implementation of the **KDD 2026 AI4Science** paper **"StageGuard: Physiologically Constrained
 Sleep Staging"** by Juntang Wang, Yihan Wang, Hao Wu, Jiayu Gao, Shixin Xu, and Dongmian Zou (Zu Chongzhi
