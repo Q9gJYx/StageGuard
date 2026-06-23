@@ -1,19 +1,20 @@
-# AccuSleep — Mouse EEG/EMG sleep staging
-# Dataset: https://zenodo.org/records/4079563
-# 3-state classification: Wake, NREM, REM
-# Epoch length: 4 seconds
+# AccuSleep - Mouse EEG/EMG sleep staging
+# Dataset: AccuSleep (Barger et al. 2019), recordings + labels on OSF (https://osf.io/py5eb/).
+# 3-state classification: Wake, NREM, REM.
+# The public OSF recordings use 2.5 s epochs; the runnable demo therefore uses
+# configs/accusleep_demo.yaml. This canonical config keeps a 4 s epoch length.
 
 dataset_name: AccuSleep
-dataset_url: https://zenodo.org/records/4079563
+dataset_url: https://osf.io/py5eb/
 
 stage_names: [Wake, NREM, REM]
 num_classes: 3
 epoch_sec: 4.0
 
-# Rare transitions: direct Wake↔REM is physiologically rare in mice
+# Rare transitions: direct Wake<->REM is physiologically rare in mice
 rare_transitions:
-  - [0, 2]  # Wake → REM
-  - [2, 0]  # REM → Wake
+  - [0, 2]  # Wake -> REM
+  - [2, 0]  # REM -> Wake
 
 # Transition penalty weight
 lambda_trans: 1.0
@@ -23,7 +24,7 @@ d_max: 50
 epsilon: 5.0
 gamma: 2.0
 k: 5
-d_min: [2, 3, 2]  # Wake ≥ 2 epochs (8s), NREM ≥ 3 (12s), REM ≥ 2 (8s)
+d_min: [2, 3, 2]  # Wake >= 2 epochs (8s), NREM >= 3 (12s), REM >= 2 (8s)
 
 # Signal quality
 sqi_method: spectral_entropy

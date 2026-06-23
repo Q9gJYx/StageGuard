@@ -52,6 +52,6 @@ class SleepAccelDataset(BaseSleepDataset):
             )
         signals = np.concatenate(signals_list, axis=0)
         labels = np.concatenate(labels_list, axis=0)
-        # Reshape to (n_epochs, 3, 1) — channel-first, single sample per epoch
+        # Reshape to (n_epochs, 3, 1) - channel-first, single sample per epoch
         signals = signals[:, :, np.newaxis]
         return signals, labels

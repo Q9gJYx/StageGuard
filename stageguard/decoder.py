@@ -74,12 +74,12 @@ class SemiMarkovDecoder:
                 for d in range(1, D + 1):
                     src = self._aug_index(s_prev, s, d)
 
-                    # --- Stay in same state: (s_prev, s, d) → (s_prev, s, min(d+1, D)) ---
+                    # --- Stay in same state: (s_prev, s, d) -> (s_prev, s, min(d+1, D)) ---
                     d_next = min(d + 1, D)
                     dst_stay = self._aug_index(s_prev, s, d_next)
                     self.valid_trans[dst_stay].append((src, 0.0))
 
-                    # --- Switch to different state: (s_prev, s, d) → (s, s', 1) ---
+                    # --- Switch to different state: (s_prev, s, d) -> (s, s', 1) ---
                     if d < self.d_min[s]:
                         continue  # Cannot leave before d_min
 
@@ -131,7 +131,7 @@ class SemiMarkovDecoder:
         viterbi = np.full((T, n_aug), -np.inf)
         backptr = np.zeros((T, n_aug), dtype=np.int32)
 
-        # Initialization: (s_prev=s, s, d=1) — sentinel s_prev=s means "no prior"
+        # Initialization: (s_prev=s, s, d=1) - sentinel s_prev=s means "no prior"
         for s in range(C):
             idx = self._aug_index(s, s, 1)
             viterbi[0, idx] = emissions[0, s]

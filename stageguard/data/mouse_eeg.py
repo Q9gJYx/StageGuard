@@ -13,13 +13,16 @@ from .base import BaseSleepDataset
 class AccuSleepDataset(BaseSleepDataset):
     """Loader for the AccuSleep mouse EEG/EMG dataset.
 
-    Expects pre-downloaded .mat or .npz files with EEG signals and
-    3-class labels (Wake=0, NREM=1, REM=2) at 4-second epoch resolution.
+    Expects pre-downloaded ``.npz`` files with EEG signals and 3-class labels
+    (Wake=0, NREM=1, REM=2). ``fs`` and ``epoch_sec`` are nominal defaults for
+    the generic ``.npz`` layout; the loader uses whatever epoch width the files
+    already encode (the demo writes 2.5 s / 128 Hz = 320 samples via
+    ``configs/accusleep_demo.yaml``).
 
-    Download: https://zenodo.org/records/4079563
+    Download: https://osf.io/py5eb/
     """
 
-    DOWNLOAD_URL = "https://zenodo.org/records/4079563"
+    DOWNLOAD_URL = "https://osf.io/py5eb/"
     DATASET_NAME = "AccuSleep"
 
     def __init__(
@@ -31,7 +34,6 @@ class AccuSleepDataset(BaseSleepDataset):
     ) -> None:
         self.fs = fs
         self.epoch_sec = epoch_sec
-        self.samples_per_epoch = int(fs * epoch_sec)
         super().__init__(data_dir, sequence_length)
 
     def _load_data(self) -> Tuple[np.ndarray, np.ndarray]:

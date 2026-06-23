@@ -1,5 +1,6 @@
 """Tests for backbone models and registry."""
 
+import pytest
 import torch
 
 from stageguard.backbones import BACKBONE_REGISTRY, get_backbone, register_backbone
@@ -44,8 +45,6 @@ class TestRegistry:
         assert isinstance(model, AccuSleepBackbone)
 
     def test_get_backbone_unknown(self):
-        import pytest
-
         with pytest.raises(ValueError, match="Unknown backbone"):
             get_backbone("nonexistent")
 

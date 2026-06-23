@@ -36,14 +36,25 @@ class TestStageGuardWrapper:
         x = torch.randn(2, 10, 8)
         preds = wrapper.predict(x)
         assert preds.shape == (2, 10)
-        assert preds.dtype == np.intp or preds.dtype == np.int64 or preds.dtype == np.int32
+        assert np.issubdtype(preds.dtype, np.integer)
 
     def test_predict_with_sqi(self, tiny_backbone, dummy_config):
         wrapper = StageGuardWrapper(tiny_backbone, dummy_config)
+        torch.manual_seed(0)
         x = torch.randn(2, 10, 8)
-        sqi = np.ones((2, 10))
-        preds = wrapper.predict(x, sqi_scores=sqi)
-        assert preds.shape == (2, 10)
+
+        # SQI = 1 is a no-op: identical to decoding without SQI.
+        base = wrapper.predict(x)
+        ones = wrapper.predict(x, sqi_scores=np.ones((2, 10)))
+        assert ones.shape == (2, 10)
+        assert np.array_equal(base, ones)
+
+        # SQI = 0 damps emissions to uniform, so the backbone output is ignored:
+        # two different inputs decode to the same path.
+        x2 = torch.randn(2, 10, 8)
+        z1 = wrapper.predict(x, sqi_scores=np.zeros((2, 10)))
+        z2 = wrapper.predict(x2, sqi_scores=np.zeros((2, 10)))
+        assert np.array_equal(z1, z2)
 
     def test_arbitrary_backbone(self, dummy_config):
         """Any nn.Module with correct output shape works."""

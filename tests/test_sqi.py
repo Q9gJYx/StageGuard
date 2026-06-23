@@ -24,7 +24,7 @@ class TestSpectralEntropy:
         t = np.linspace(0, 1, 256, endpoint=False)
         x = np.sin(2 * np.pi * 10 * t)  # Pure 10 Hz sine
         val = spectral_entropy(x, fs=256.0)
-        # Concentrated spectrum → low entropy → high quality
+        # Concentrated spectrum -> low entropy -> high quality
         assert val > 0.3
 
 

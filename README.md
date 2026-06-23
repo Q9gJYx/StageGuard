@@ -1,17 +1,15 @@
-# [KDD 2026 AI4Sci] StageGuard: Physiologically Constrained Sleep Staging
+# [KDD 2026 AI4Science] StageGuard: Physiologically Constrained Sleep Staging
 
 **Backbone-agnostic physiological constraints for neural sleep staging.**
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Q9gJYx/StageGuard/blob/main/notebooks/demo_stageguard.ipynb)
-[![KDD 2026](https://img.shields.io/badge/KDD-2026%20AI4Sci-1d4ed8.svg)](https://doi.org/10.1145/3770855.3818916)
-[![DOI](https://img.shields.io/badge/DOI-10.1145%2F3770855.3818916-blue.svg)](https://doi.org/10.1145/3770855.3818916)
+[![KDD 2026](https://img.shields.io/badge/KDD-2026%20AI4Science-1d4ed8.svg)](https://doi.org/10.1145/3770855.3818916)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-ee4c2c.svg)](https://pytorch.org)
 <!-- After depositing the release on Zenodo, add the archival DOI badge here:
 [![Zenodo](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXXX) -->
 
-Official implementation of the **KDD 2026 AI4Sciences** paper **"StageGuard: Physiologically Constrained
+Official implementation of the **KDD 2026 AI4Science** paper **"StageGuard: Physiologically Constrained
 Sleep Staging"** by Juntang Wang, Yihan Wang, Hao Wu, Jiayu Gao, Shixin Xu, and Dongmian Zou (Zu Chongzhi
 Center, Duke Kunshan University). Equal contribution: Juntang Wang, Yihan Wang, Hao Wu, Jiayu Gao.
 Corresponding author: Dongmian Zou (`dongmian.zou@duke.edu`).
@@ -31,17 +29,17 @@ Corresponding author: Dongmian Zou (`dongmian.zou@duke.edu`).
 > slightly improving classification accuracy, and improves the accuracy of derived sleep-architecture
 > statistics that are not directly optimized by the method.
 
-## News
+## 📰 News
 
-- **2026** Accepted to KDD 2026 (AI4Sciences track), Jeju Island, Republic of Korea (Aug 9 to 13, 2026).
+- **2026** Accepted to KDD 2026 (AI4Science track), Jeju Island, Republic of Korea (Aug 9 to 13, 2026).
 
-## Key Contributions
+## 📌 Method
 
 1. **Soft Transition Penalty** - A differentiable loss term that discourages physiologically rare stage transitions (e.g., Wake to/from REM) during training.
 2. **Semi-Markov Decoder** - An augmented Viterbi decoder that enforces minimum bout durations, penalizes rare transitions, and suppresses flip-flop artifacts at inference time.
 3. **Signal Quality Integration** - Per-epoch signal quality scores modulate decoder confidence, gracefully degrading predictions for noisy segments.
 
-## Installation
+## 📦 Installation
 
 ```bash
 # With conda
@@ -55,18 +53,21 @@ pip install -e .
 pip install -e ".[demo]"
 ```
 
-## Demo
+## 🚀 Demo
 
-Run the interactive demo on Colab (no install, a few seconds on CPU):
+Run the interactive demo on Colab:
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Q9gJYx/StageGuard/blob/main/notebooks/demo_stageguard.ipynb)
 
-It loads real Sleep-Accel PSG hypnograms (shipped under ODC-By), simulates a noisy backbone, and shows the
-semi-Markov decoder driving the transition-violation rate (TVR) and fragmentation index (FI) down while
-holding or improving accuracy, with a before/after hypnogram plot. See
+It **trains the real AccuSleep backbone on real mouse EEG** (downloaded at runtime from the open AccuSleep
+dataset), then runs the semi-Markov decoder on a held-out night and shows the transition-violation rate (TVR)
+and fragmentation index (FI) drop while accuracy is held or improved, with a before/after hypnogram plot. The
+backbone is trained EEG-only, so it confuses Wake and REM and fragments bouts - exactly the errors the decoder
+repairs. Expect a ~233 MB download and roughly 3-5 minutes on a Colab CPU. No raw data is shipped in this
+repository; the notebook downloads it at runtime. See
 [`notebooks/demo_stageguard.ipynb`](notebooks/demo_stageguard.ipynb).
 
-## Quick Start
+## ⚡ Quick Start
 
 ```python
 import torch
@@ -90,7 +91,7 @@ loss.backward()
 predictions = model.predict(x)  # (4, 50) numpy array
 ```
 
-## Wrap Your Own Backbone
+## 🧩 Wrap Your Own Backbone
 
 Any `nn.Module` that outputs `(B, T, num_classes)` logits works:
 
@@ -107,7 +108,7 @@ model = StageGuardWrapper(MyBackbone(), config)
 
 See [`docs/backbones.md`](docs/backbones.md) for the full interface contract and the `ModalityConfig` schema.
 
-## Repository Structure
+## 🗂️ Repository Structure
 
 ```
 StageGuard/
@@ -116,7 +117,7 @@ StageGuard/
 │   ├── actigraphy.yaml           # Sleep-Accel: 2-state, 30s epochs
 │   ├── cardiorespiratory.yaml    # SHHS: 3-state, 30s epochs
 │   ├── bioradar.yaml             # SLEEPBRL: 3-state, 30s epochs
-│   └── sleepaccel_demo.yaml      # 3-state Wake/NREM/REM config used by the demo
+│   └── accusleep_demo.yaml       # 3-state mouse-EEG config used by the demo (2.5s epochs)
 ├── stageguard/
 │   ├── config.py                 # ModalityConfig dataclass + YAML loader
 │   ├── losses.py                 # SoftTransitionPenalty + stageguard_loss
@@ -127,13 +128,16 @@ StageGuard/
 │   ├── backbones/                # Backbone implementations + registry
 │   └── data/                     # Dataset loaders (expect pre-downloaded data)
 ├── notebooks/
-│   └── demo_stageguard.ipynb     # Colab-runnable demo
+│   └── demo_stageguard.ipynb     # Colab-runnable train + decode demo (real mouse EEG)
+├── scripts/
+│   ├── build_accusleep_demo.py   # reproduce the demo's data step locally (downloads, no data shipped)
+│   └── smoke_test.py             # standalone forward / train / predict sanity check
 ├── data/
-│   ├── sleepaccel_demo.npz       # small Sleep-Accel PSG hypnogram subset (ODC-By)
-│   └── README.md                 # provenance, license, stage-collapse mapping
+│   └── README.md                 # demo-data provenance, license, stage mapping
 ├── docs/
 │   ├── datasets.md               # dataset access + loader formats
-│   └── backbones.md              # interface contract + config schema
+│   ├── backbones.md              # interface contract + config schema
+│   └── dependencies.md           # third-party provenance + attribution
 ├── examples/demo.py              # end-to-end synthetic data demo
 ├── tests/                        # test suite
 ├── ROADMAP.md
@@ -141,25 +145,23 @@ StageGuard/
 └── .zenodo.json
 ```
 
-## Datasets
+## 📊 Datasets
 
 | Dataset | Modality | Classes | Epoch | Access |
 |---------|----------|---------|-------|--------|
-| AccuSleep | Mouse EEG/EMG | 3 (Wake, NREM, REM) | 4s | Open ([Zenodo](https://zenodo.org/records/4079563)) |
+| AccuSleep | Mouse EEG/EMG | 3 (Wake, NREM, REM) | 2.5s (native; canonical config 4s) | Open ([OSF](https://osf.io/py5eb/)) |
 | Sleep-Accel | Wrist actigraphy | 2 (Wake, Sleep) | 30s | Open, ODC-By ([PhysioNet](https://physionet.org/content/sleep-accel/1.0.0/)) |
 | SHHS | Cardiorespiratory | 3 (Wake, Light, Deep) | 30s | Data-use agreement ([NSRR](https://sleepdata.org/datasets/shhs)) |
 | SLEEPBRL | Bioradar | 3 (Wake, Light, Deep) | 30s | Contact authors |
 
 Datasets must be downloaded separately; some require data use agreements. Each loader provides download
 instructions via `Dataset.download_instructions()`. See [`docs/datasets.md`](docs/datasets.md) for the
-expected on-disk formats. The demo notebook uses a small, redistributable subset of Sleep-Accel PSG
-hypnograms shipped at [`data/sleepaccel_demo.npz`](data/sleepaccel_demo.npz) (see
-[`data/README.md`](data/README.md)).
+expected on-disk formats and [`data/README.md`](data/README.md) for the demo-data provenance.
 
-## Hyperparameters
+## 🎛️ Hyperparameters
 
-| Parameter | Symbol | Default | Description |
-|-----------|--------|---------|-------------|
+| Parameter | Symbol | Code default | Description |
+|-----------|--------|--------------|-------------|
 | `lambda_trans` | lambda | 1.0 | Transition penalty weight |
 | `epsilon` | epsilon | 5.0 | Rare transition penalty in decoder |
 | `gamma` | gamma | 2.0 | Anti-flip-flop penalty |
@@ -167,28 +169,38 @@ hypnograms shipped at [`data/sleepaccel_demo.npz`](data/sleepaccel_demo.npz) (se
 | `d_min` | d_min | per-stage | Minimum bout duration (epochs) |
 | `d_max` | d_max | 30 | Maximum tracked duration (epochs) |
 
-## Running Tests
+These are the `ModalityConfig` code defaults; per-modality `configs/*.yaml` override them (for example
+`mouse_eeg.yaml` sets `d_max` 50, and the demo config uses `d_max` 20, `k` 4, `lambda_trans` 0.1).
+
+## 🔁 Development
 
 ```bash
-pytest               # Run all tests
-pytest -x            # Stop on first failure
-pytest tests/test_decoder.py  # Single module
+pytest                                   # run the test suite
+pytest tests/test_decoder.py             # a single module
+python examples/demo.py                  # end-to-end on synthetic data
+python scripts/smoke_test.py             # quick forward / train / predict sanity check
+python scripts/build_accusleep_demo.py   # reproduce the demo's mouse-EEG data locally (downloads; nothing committed)
 ```
 
-## Running the Demo
+`build_accusleep_demo.py` writes a local `data/accusleep_demo.npz` (git-ignored); no raw data is committed,
+since the AccuSleep recordings carry no redistribution license (see [`data/README.md`](data/README.md)).
 
-```bash
-python examples/demo.py
-```
+## 🔗 Dependencies and Attribution
 
-## Acknowledgments
+The bundled `accusleep` and `usleep` backbones are clean reimplementations of published architectures (Barger
+et al. 2019; Perslev et al. 2021), not ports; no third-party source is vendored here. The four datasets are
+obtained from their own sources under their own licenses, and the demo downloads AccuSleep mouse EEG from its
+public [OSF project](https://osf.io/py5eb/) at runtime rather than redistributing it. See
+[`docs/dependencies.md`](docs/dependencies.md) for the full provenance table.
+
+## 🙏 Acknowledgments
 
 We thank the authors of the datasets used in this work: AccuSleep (Barger et al., 2019), Sleep-Accel (Walch
-et al., 2019, distributed via PhysioNet under ODC-By), SHHS (Quan et al., 1997, via the NSRR), and SLEEPBRL
-(Tataraidze et al., 2015). The reference backbones reimplement architectures from AccuSleep (Barger et al.,
-2019) and U-Sleep (Perslev et al., 2021).
+et al., 2019), SHHS (Quan et al., 1997), and SLEEPBRL (Tataraidze et al., 2015), and the authors of the
+AccuSleep and U-Sleep architectures that the reference backbones reimplement. Provenance and licenses are
+detailed in [`docs/dependencies.md`](docs/dependencies.md).
 
-## Citation
+## 📚 Citation
 
 If you use StageGuard in your research, please cite:
 
@@ -205,6 +217,6 @@ If you use StageGuard in your research, please cite:
 A machine-readable [CITATION.cff](CITATION.cff) is also provided, which GitHub renders into a "Cite this
 repository" button on the project page.
 
-## License
+## 📝 License
 
 Released under the MIT License. See [LICENSE](LICENSE) for details.

@@ -7,6 +7,7 @@ StageGuard is evaluated on four sleep datasets spanning four modalities. The dat
 ```python
 from stageguard.data.mouse_eeg import AccuSleepDataset
 print(AccuSleepDataset.download_instructions())
+# after downloading data into accusleep_dir/:
 ds = AccuSleepDataset("path/to/accusleep_dir", sequence_length=100)
 ```
 
@@ -14,34 +15,42 @@ ds = AccuSleepDataset("path/to/accusleep_dir", sequence_length=100)
 
 | Dataset | Modality | Classes | Epoch | Access | Loader |
 |---|---|---|---|---|---|
-| AccuSleep | Mouse EEG/EMG | 3 (Wake, NREM, REM) | 4 s | Open ([Zenodo](https://zenodo.org/records/4079563)) | `data/mouse_eeg.py` |
-| Sleep-Accel | Wrist actigraphy | 2 (Wake, Sleep) | 30 s | Open, ODC-By ([PhysioNet](https://physionet.org/content/sleep-accel/1.0.0/)) | `data/actigraphy.py` |
-| SHHS | Cardiorespiratory | 3 (Wake, Light, Deep) | 30 s | Data-use agreement ([NSRR](https://sleepdata.org/datasets/shhs)) | `data/cardiorespiratory.py` |
-| SLEEPBRL | Bioradar | 3 (Wake, Light, Deep) | 30 s | Contact authors | `data/bioradar.py` |
+| AccuSleep | Mouse EEG/EMG | 3 (Wake, NREM, REM) | 2.5 s | Open ([OSF](https://osf.io/py5eb/)) | `stageguard/data/mouse_eeg.py` |
+| Sleep-Accel | Wrist actigraphy | 2 (Wake, Sleep) | 30 s | Open, ODC-By ([PhysioNet](https://physionet.org/content/sleep-accel/1.0.0/)) | `stageguard/data/actigraphy.py` |
+| SHHS | Cardiorespiratory | 3 (Wake, Light, Deep) | 30 s | Data-use agreement ([NSRR](https://sleepdata.org/datasets/shhs)) | `stageguard/data/cardiorespiratory.py` |
+| SLEEPBRL | Bioradar | 3 (Wake, Light, Deep) | 30 s | Contact authors | `stageguard/data/bioradar.py` |
+
+The Epoch column lists each dataset's native epoch length. StageGuard configs may re-window: the AccuSleep
+demo keeps the native 2.5 s (`configs/accusleep_demo.yaml`), while the canonical `configs/mouse_eeg.yaml`
+uses 4 s.
 
 Each loader concatenates per-recording files found in `data_dir` and returns `(signals, labels)`.
 
 ## On-disk formats expected by each loader
 
 - **AccuSleep** (`AccuSleepDataset`): one or more `*.npz` files, each with `eeg` of shape
-  `(n_epochs, samples_per_epoch)` and integer `labels` of shape `(n_epochs,)` (Wake=0, NREM=1, REM=2).
-  Defaults: `fs=256`, `epoch_sec=4.0`.
+  `(n_epochs, samples_per_epoch)` and integer `labels` of shape `(n_epochs,)` (Wake=0, NREM=1, REM=2). The
+  loader reads whatever epoch width the files encode; `fs=256`, `epoch_sec=4.0` are the canonical-config
+  defaults, while the runnable demo uses 2.5 s / 128 Hz (320 samples) per `configs/accusleep_demo.yaml`.
 - **Sleep-Accel** (`SleepAccelDataset`): per-subject CSV with columns `timestamp, x, y, z, label`, one row per
   30 s epoch, binary `label` (Wake=0, Sleep=1).
 - **SHHS** (`SHHSDataset`): `*.h5` files, each with HDF5 datasets `features` and `labels` (Wake=0, Light=1,
-  Deep=2). Access requires an NSRR data-use agreement.
+  Deep=2). StageGuard collapses the native PSG stages into this 3-class scheme (as with the AccuSleep mapping
+  above). Access requires an NSRR data-use agreement.
 - **SLEEPBRL** (`SleepBRLDataset`): `*.npz` files, each with `signals` and `labels` (Wake=0, Light=1, Deep=2).
   Not publicly redistributable; contact the authors.
 
-Modality-specific physiological constraints live in `configs/*.yaml` (one per dataset); load them with
-`ModalityConfig.from_yaml(...)`.
+Modality-specific physiological constraints live in `configs/*.yaml` (one per dataset, plus
+`configs/accusleep_demo.yaml` for the runnable demo); load them with `ModalityConfig.from_yaml(...)`.
 
-## Demo data subset
+## Demo data
 
-The notebook [`notebooks/demo_stageguard.ipynb`](../notebooks/demo_stageguard.ipynb) does **not** require any of
-the above. It uses a small, redistributable subset of **Sleep-Accel PSG hypnograms** (labels only, collapsed
-to 3 states) shipped at [`data/sleepaccel_demo.npz`](../data/sleepaccel_demo.npz). See
-[`data/README.md`](../data/README.md) for provenance, the ODC-By attribution, and the stage-collapse mapping.
+The notebook [`notebooks/demo_stageguard.ipynb`](../notebooks/demo_stageguard.ipynb) **downloads** one mouse
+recording from the open **AccuSleep** dataset ([OSF `py5eb`](https://osf.io/py5eb/)) at runtime and trains the
+AccuSleep backbone EEG-only on four nights, evaluating on a held-out night. No raw data is shipped in this
+repository (the OSF project declares no redistribution license). Reproduce the data step locally with
+`python scripts/build_accusleep_demo.py`. See [`data/README.md`](../data/README.md) for provenance, the
+license note, and the stage-code mapping.
 
 ## Citations
 
