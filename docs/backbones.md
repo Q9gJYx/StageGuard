@@ -32,6 +32,9 @@ predictions = model.predict(x)                     # constrained decode -> (B, T
 | `accusleep` | 2-layer 1D CNN | Barger et al. (2019) |
 | `usleep` | U-Net encoder-decoder | Perslev et al. (2021) |
 
+The demo notebook trains `accusleep` **EEG-only** (`in_channels=1`) on real mouse EEG; without the EMG
+channel the backbone confuses Wake and REM, which is exactly the kind of error the decoder repairs.
+
 ```python
 from stageguard.backbones import get_backbone, register_backbone
 backbone = get_backbone("accusleep", num_classes=3, in_channels=1)

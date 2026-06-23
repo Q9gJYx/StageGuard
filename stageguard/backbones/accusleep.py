@@ -11,7 +11,7 @@ from .base import BackboneBase
 class AccuSleepBackbone(BackboneBase):
     """Simplified AccuSleep-style 2-layer CNN.
 
-    Expects input of shape (B, T, 1, epoch_samples) — single-channel EEG
+    Expects input of shape (B, T, 1, epoch_samples) - single-channel EEG
     epochs. Outputs (B, T, num_classes) logits.
     """
 

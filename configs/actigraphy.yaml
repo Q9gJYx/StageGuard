@@ -1,4 +1,4 @@
-# Sleep-Accel — Wrist actigraphy sleep staging
+# Sleep-Accel - Wrist actigraphy sleep staging
 # Dataset: https://physionet.org/content/sleep-accel/1.0.0/
 # 2-state classification: Wake, Sleep
 # Epoch length: 30 seconds
@@ -10,7 +10,7 @@ stage_names: [Wake, Sleep]
 num_classes: 2
 epoch_sec: 30.0
 
-# Rare transitions: none for binary — but rapid alternation is penalized
+# Rare transitions: none for binary - but rapid alternation is penalized
 rare_transitions: []
 
 # Transition penalty weight

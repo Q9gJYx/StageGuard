@@ -1,109 +1,66 @@
 # Demo data
 
-This directory ships a single small artifact, **`sleepaccel_demo.npz`**, used by
-[`notebooks/demo_stageguard.ipynb`](../notebooks/demo_stageguard.ipynb). It contains **labels only**
-(sleep-stage hypnograms) for 5 subjects — **no raw accelerometer or photoplethysmography signals are
-redistributed.** It exists so the notebook can demonstrate StageGuard's constrained decoder end-to-end on
-real PSG hypnograms without any download or data-use agreement.
+**No raw data is shipped in this repository.** The demo notebook
+([`notebooks/demo_stageguard.ipynb`](../notebooks/demo_stageguard.ipynb)) and the build script
+([`scripts/build_accusleep_demo.py`](../scripts/build_accusleep_demo.py)) **download** a single mouse
+recording from the public AccuSleep dataset at runtime, into a local `accusleep_data/` directory that is
+git-ignored.
 
-> StageGuard's full datasets (AccuSleep, Sleep-Accel, SHHS, SLEEPBRL) are described in
-> [`docs/datasets.md`](../docs/datasets.md); most must be obtained separately.
+## Source: AccuSleep mouse EEG/EMG
 
-## Provenance
+The demo trains on the open **AccuSleep** dataset (Barger et al. 2019): mouse EEG/EMG recorded at **512 Hz**
+with expert sleep-stage labels at a **2.5 s** epoch resolution.
 
-Derived from the PhysioNet dataset **"Motion and heart rate from a wrist-worn wearable and labeled sleep from
-polysomnography"** v1.0.0 (Walch et al.), DOI [`10.13026/hmhs-py35`](https://doi.org/10.13026/hmhs-py35),
-<https://physionet.org/content/sleep-accel/1.0.0/>. Only the per-subject PSG label files
-(`labels/<id>_labeled_sleep.txt`) were used.
+- Project: <https://github.com/zekebarger/AccuSleep>
+- Data: OSF project [`py5eb`](https://osf.io/py5eb/) (`matlab_format/4-hour_recordings/Mouse0N.zip`)
+- Paper: Barger Z., Frye C. G., Liu D., Dan Y., Bouchard K. E. (2019). *Robust, automated sleep scoring by a
+  compact neural network with distributional shift correction.* PLOS ONE 14(12):e0224642.
+  DOI [10.1371/journal.pone.0224642](https://doi.org/10.1371/journal.pone.0224642).
 
-Subjects shipped (PhysioNet IDs): **4426783, 781756, 9961348, 759667, 1066528**.
+**License note.** The OSF project does not declare a redistribution license, so this repository does not
+bundle or re-host any of its recordings. The notebook downloads the data directly from OSF, exactly as a user
+would, and uses it only for the demonstration.
 
-## License & attribution
+## What the demo does with it
 
-The source dataset is released under the **Open Data Commons Attribution License v1.0 (ODC-By)**. Per its
-terms, this redistributed subset carries the following attribution:
+It downloads one mouse (`Mouse03`, ~233 MB), which contains five nightly 4-hour sessions
+(`Day1`-`Day5`), each with `EEG.mat`, `EMG.mat`, and `labels.mat`. The demo:
 
-> Contains information from *Motion and heart rate from a wrist-worn wearable and labeled sleep from
-> polysomnography* (PhysioNet, DOI 10.13026/hmhs-py35), which is made available under the
-> [ODC Attribution License](https://opendatacommons.org/licenses/by/1.0/).
+1. loads the **EEG only** (the AccuSleep backbone is trained single-channel),
+2. anti-aliases and downsamples 512 -> 128 Hz, then cuts the signal into 2.5 s epochs (320 samples each),
+3. maps the AccuSleep stage codes to the StageGuard convention,
+4. trains on four nights (`Day2`-`Day5`) and evaluates on the held-out night (`Day1`).
 
-Please cite the original work if you use this artifact:
+### Stage-code mapping
+
+| AccuSleep code | Stage | StageGuard label |
+|----------------|-------|------------------|
+| 1              | REM   | 2                |
+| 2              | Wake  | 0                |
+| 3              | NREM  | 1                |
+
+(`Mouse03` is fully scored; there are no `undefined` epochs to drop.)
+
+## Reproduce locally
+
+```bash
+python scripts/build_accusleep_demo.py
+```
+
+This performs the same download + transform and writes a local `data/accusleep_demo.npz`
+(git-ignored) in the format expected by `stageguard.data.AccuSleepDataset`. Nothing it produces is committed.
+
+## Attribution
 
 ```bibtex
-@article{walch2019sleep,
-  author  = {Walch, Olivia and Huang, Yitong and Forger, Daniel and Goldstein, Cathy},
-  title   = {Sleep stage prediction with raw acceleration and photoplethysmography heart rate
-             data derived from a consumer wearable device},
-  journal = {Sleep},
-  volume  = {42},
+@article{barger2019accusleep,
+  title   = {Robust, automated sleep scoring by a compact neural network with distributional shift correction},
+  author  = {Barger, Zeke and Frye, Charles G. and Liu, Danqian and Dan, Yang and Bouchard, Kristofer E.},
+  journal = {PLOS ONE},
+  volume  = {14},
   number  = {12},
-  pages   = {zsz180},
+  pages   = {e0224642},
   year    = {2019},
-  doi     = {10.1093/sleep/zsz180}
-}
-
-@misc{physionet_sleepaccel,
-  author = {Walch, Olivia},
-  title  = {Motion and heart rate from a wrist-worn wearable and labeled sleep from polysomnography
-            (version 1.0.0)},
-  year   = {2019},
-  doi    = {10.13026/hmhs-py35},
-  note   = {PhysioNet}
-}
-
-@article{goldberger2000physionet,
-  author  = {Goldberger, A. L. and Amaral, L. A. N. and Glass, L. and others},
-  title   = {{PhysioBank, PhysioToolkit, and PhysioNet}},
-  journal = {Circulation},
-  volume  = {101},
-  number  = {23},
-  pages   = {e215--e220},
-  year    = {2000},
-  doi     = {10.1161/01.CIR.101.23.e215}
+  doi     = {10.1371/journal.pone.0224642}
 }
 ```
-
-## Stage collapse (5-stage -> 3-state)
-
-The source labels follow AASM/R&K codes. They are collapsed to the 3-state scheme of
-[`configs/sleepaccel_demo.yaml`](../configs/sleepaccel_demo.yaml):
-
-| Source code | Meaning | StageGuard 3-state |
-|---|---|---|
-| 0 | Wake | `0` Wake |
-| 1 | N1 | `1` NREM |
-| 2 | N2 | `1` NREM |
-| 3 | N3 | `1` NREM |
-| 4 | (R&K stage 4, deep) | `1` NREM |
-| 5 | REM | `2` REM |
-| -1 | unscored / artifact | `0` Wake |
-
-`-1` is mapped to Wake (not dropped) so that no spurious cross-gap transitions are introduced into the
-ground-truth hypnogram. The shipped subjects happen to contain only codes `{0,1,2,3,5}`, but the mapping
-handles `4` and `-1` for reproducibility.
-
-## File schema (`sleepaccel_demo.npz`)
-
-Saved with per-subject keys (no `allow_pickle` required on load):
-
-| key | dtype | shape | meaning |
-|---|---|---|---|
-| `hypno_0` … `hypno_4` | `int64` | `(T_i,)` | collapsed hypnogram per subject; values in `{0,1,2}` |
-| `subject_ids` | `<U…` | `(5,)` | PhysioNet subject IDs (order matches `hypno_*`) |
-| `lengths` | `int64` | `(5,)` | epoch count `T_i` per subject |
-| `epoch_sec` | `float64` | scalar | 30.0 |
-| `stage_names` | `<U…` | `(3,)` | `["Wake", "NREM", "REM"]` |
-
-```python
-import numpy as np
-d = np.load("data/sleepaccel_demo.npz")
-hypno = d["hypno_0"].astype(int)          # primary subject, (T,) in {0,1,2}
-epoch_sec = float(d["epoch_sec"])         # 30.0
-stage_names = list(d["stage_names"])      # ["Wake", "NREM", "REM"]
-```
-
-## Disclaimer
-
-This is a small subset for reproducing the notebook only; it is **not** a replacement for the full
-Sleep-Accel dataset. For the complete data (including the raw motion/heart-rate signals), download it directly
-from PhysioNet under the ODC-By terms.

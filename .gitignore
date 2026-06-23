@@ -209,8 +209,10 @@ __marimo__/
 # Agent scratch
 .claude/
 
-# Data: ship ONLY the curated demo artifact; never raw downloads or transient outputs.
-data/_raw_labels/
+# Data: no raw data is shipped; only docs. The demo downloads from OSF at runtime.
 data/*
 !data/README.md
-!data/sleepaccel_demo.npz
+!data/.gitkeep
+
+# AccuSleep recordings downloaded at runtime by the notebook / build script (never committed)
+accusleep_data/

@@ -131,7 +131,7 @@ class SemiMarkovDecoder:
         viterbi = np.full((T, n_aug), -np.inf)
         backptr = np.zeros((T, n_aug), dtype=np.int32)
 
-        # Initialization: (s_prev=s, s, d=1) — sentinel s_prev=s means "no prior"
+        # Initialization: (s_prev=s, s, d=1) - sentinel s_prev=s means "no prior"
         for s in range(C):
             idx = self._aug_index(s, s, 1)
             viterbi[0, idx] = emissions[0, s]

@@ -57,13 +57,15 @@ pip install -e ".[demo]"
 
 ## Demo
 
-Run the interactive demo on Colab (no install, a few seconds on CPU):
+Run the interactive demo on Colab:
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Q9gJYx/StageGuard/blob/main/notebooks/demo_stageguard.ipynb)
 
-It loads real Sleep-Accel PSG hypnograms (shipped under ODC-By), simulates a noisy backbone, and shows the
-semi-Markov decoder driving the transition-violation rate (TVR) and fragmentation index (FI) down while
-holding or improving accuracy, with a before/after hypnogram plot. See
+It **trains the real AccuSleep backbone on real mouse EEG** (downloaded at runtime from the open AccuSleep
+dataset), then runs the semi-Markov decoder on a held-out night and shows the transition-violation rate (TVR)
+and fragmentation index (FI) drop while accuracy is held or improved, with a before/after hypnogram plot. The
+backbone is trained EEG-only, so it confuses Wake and REM and fragments bouts - exactly the errors the decoder
+repairs. Expect a ~233 MB download and roughly 3-5 minutes on a Colab CPU. See
 [`notebooks/demo_stageguard.ipynb`](notebooks/demo_stageguard.ipynb).
 
 ## Quick Start
@@ -116,7 +118,7 @@ StageGuard/
 │   ├── actigraphy.yaml           # Sleep-Accel: 2-state, 30s epochs
 │   ├── cardiorespiratory.yaml    # SHHS: 3-state, 30s epochs
 │   ├── bioradar.yaml             # SLEEPBRL: 3-state, 30s epochs
-│   └── sleepaccel_demo.yaml      # 3-state Wake/NREM/REM config used by the demo
+│   └── accusleep_demo.yaml       # 3-state mouse-EEG config used by the demo (2.5s epochs)
 ├── stageguard/
 │   ├── config.py                 # ModalityConfig dataclass + YAML loader
 │   ├── losses.py                 # SoftTransitionPenalty + stageguard_loss
@@ -127,10 +129,12 @@ StageGuard/
 │   ├── backbones/                # Backbone implementations + registry
 │   └── data/                     # Dataset loaders (expect pre-downloaded data)
 ├── notebooks/
-│   └── demo_stageguard.ipynb     # Colab-runnable demo
+│   └── demo_stageguard.ipynb     # Colab-runnable train + decode demo (real mouse EEG)
+├── scripts/
+│   ├── build_accusleep_demo.py   # reproduce the demo's data step locally (downloads, no data shipped)
+│   └── smoke_test.py             # standalone forward / train / predict sanity check
 ├── data/
-│   ├── sleepaccel_demo.npz       # small Sleep-Accel PSG hypnogram subset (ODC-By)
-│   └── README.md                 # provenance, license, stage-collapse mapping
+│   └── README.md                 # demo-data provenance, license, stage mapping (no raw data shipped)
 ├── docs/
 │   ├── datasets.md               # dataset access + loader formats
 │   └── backbones.md              # interface contract + config schema
@@ -145,16 +149,15 @@ StageGuard/
 
 | Dataset | Modality | Classes | Epoch | Access |
 |---------|----------|---------|-------|--------|
-| AccuSleep | Mouse EEG/EMG | 3 (Wake, NREM, REM) | 4s | Open ([Zenodo](https://zenodo.org/records/4079563)) |
+| AccuSleep | Mouse EEG/EMG | 3 (Wake, NREM, REM) | 2.5s | Open ([OSF](https://osf.io/py5eb/)) |
 | Sleep-Accel | Wrist actigraphy | 2 (Wake, Sleep) | 30s | Open, ODC-By ([PhysioNet](https://physionet.org/content/sleep-accel/1.0.0/)) |
 | SHHS | Cardiorespiratory | 3 (Wake, Light, Deep) | 30s | Data-use agreement ([NSRR](https://sleepdata.org/datasets/shhs)) |
 | SLEEPBRL | Bioradar | 3 (Wake, Light, Deep) | 30s | Contact authors |
 
 Datasets must be downloaded separately; some require data use agreements. Each loader provides download
 instructions via `Dataset.download_instructions()`. See [`docs/datasets.md`](docs/datasets.md) for the
-expected on-disk formats. The demo notebook uses a small, redistributable subset of Sleep-Accel PSG
-hypnograms shipped at [`data/sleepaccel_demo.npz`](data/sleepaccel_demo.npz) (see
-[`data/README.md`](data/README.md)).
+expected on-disk formats. The demo notebook downloads one mouse recording from the open AccuSleep dataset at
+runtime and trains on it; no raw data is shipped in this repository (see [`data/README.md`](data/README.md)).
 
 ## Hyperparameters
 
@@ -178,15 +181,27 @@ pytest tests/test_decoder.py  # Single module
 ## Running the Demo
 
 ```bash
-python examples/demo.py
+python examples/demo.py            # end-to-end on synthetic data
 ```
+
+## Scripts
+
+```bash
+python scripts/build_accusleep_demo.py   # download + transform the demo's mouse-EEG data locally
+python scripts/smoke_test.py             # quick forward / train / predict sanity check
+```
+
+`build_accusleep_demo.py` writes a local `data/accusleep_demo.npz` (git-ignored); no raw data is committed,
+since the AccuSleep recordings carry no redistribution license (see [`data/README.md`](data/README.md)).
 
 ## Acknowledgments
 
 We thank the authors of the datasets used in this work: AccuSleep (Barger et al., 2019), Sleep-Accel (Walch
 et al., 2019, distributed via PhysioNet under ODC-By), SHHS (Quan et al., 1997, via the NSRR), and SLEEPBRL
 (Tataraidze et al., 2015). The reference backbones reimplement architectures from AccuSleep (Barger et al.,
-2019) and U-Sleep (Perslev et al., 2021).
+2019) and U-Sleep (Perslev et al., 2021). The demo notebook downloads AccuSleep mouse EEG from its public
+[OSF project](https://osf.io/py5eb/) at runtime; that data is used only for the demonstration and is not
+redistributed here.
 
 ## Citation
 

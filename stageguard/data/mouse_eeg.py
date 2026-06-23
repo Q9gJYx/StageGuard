@@ -16,10 +16,10 @@ class AccuSleepDataset(BaseSleepDataset):
     Expects pre-downloaded .mat or .npz files with EEG signals and
     3-class labels (Wake=0, NREM=1, REM=2) at 4-second epoch resolution.
 
-    Download: https://zenodo.org/records/4079563
+    Download: https://osf.io/py5eb/
     """
 
-    DOWNLOAD_URL = "https://zenodo.org/records/4079563"
+    DOWNLOAD_URL = "https://osf.io/py5eb/"
     DATASET_NAME = "AccuSleep"
 
     def __init__(
