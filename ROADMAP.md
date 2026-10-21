@@ -6,7 +6,7 @@ SQI) with two reference backbones and a runnable demo.
 
 ## Additional backbone adapters
 
-The paper evaluates six backbones; two ship here (`accusleep`, `usleep`). Reference adapters for the
+The paper evaluates six backbones; two are included here (`accusleep`, `usleep`). Reference adapters for the
 remaining four are planned:
 
 - DeepSleepNet (Supratak et al., 2017)
@@ -30,5 +30,5 @@ paper's tables, plus exact-version environment locks and per-run seeds.
 
 ## More modalities and configs
 
-- Additional `configs/*.yaml` for further datasets and stage schemes.
+- Additional `configs/*.yaml` for more datasets and stage schemes.
 - Optional helper utilities for converting common PSG label formats into the loaders' expected layouts.

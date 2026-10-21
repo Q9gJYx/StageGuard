@@ -7,7 +7,7 @@ StageGuard is evaluated on four sleep datasets spanning four modalities. The dat
 ```python
 from stageguard.data.mouse_eeg import AccuSleepDataset
 print(AccuSleepDataset.download_instructions())
-# after downloading data into accusleep_dir/:
+# After downloading the data into accusleep_dir/:
 ds = AccuSleepDataset("path/to/accusleep_dir", sequence_length=100)
 ```
 
@@ -54,7 +54,7 @@ license note, and the stage-code mapping.
 
 ## Citations
 
-Cite the dataset you use:
+Please cite the dataset you use:
 
 - AccuSleep: Barger et al. (2019).
 - Sleep-Accel: Walch et al. (2019), `10.1093/sleep/zsz180`; PhysioNet record `10.13026/hmhs-py35`.

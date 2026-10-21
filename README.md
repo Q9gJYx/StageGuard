@@ -73,10 +73,10 @@ import torch
 from stageguard import StageGuardWrapper, ModalityConfig
 from stageguard.backbones import get_backbone
 
-# Load modality config
+# Load the modality configuration
 config = ModalityConfig.from_yaml("configs/mouse_eeg.yaml")
 
-# Create backbone + StageGuard wrapper
+# Create the backbone and StageGuard wrapper
 backbone = get_backbone("accusleep", num_classes=config.num_classes)
 model = StageGuardWrapper(backbone, config)
 

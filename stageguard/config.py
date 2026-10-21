@@ -39,7 +39,7 @@ class ModalityConfig:
     # --- Epoch ---
     epoch_sec: float = 30.0
 
-    # --- Dataset info (optional) ---
+    # --- Dataset information (optional) ---
     dataset_name: Optional[str] = None
     dataset_url: Optional[str] = None
 
@@ -54,7 +54,7 @@ class ModalityConfig:
                 f"len(d_min) ({len(self.d_min)}) != "
                 f"num_classes ({self.num_classes})"
             )
-        # Convert rare_transitions from list-of-lists to list-of-tuples
+        # Convert rare_transitions from a list of lists to a list of tuples
         self.rare_transitions = [tuple(t) for t in self.rare_transitions]
 
     @classmethod

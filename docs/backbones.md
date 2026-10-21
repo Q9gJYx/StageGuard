@@ -6,8 +6,8 @@ backbone must satisfy, the configuration schema, and how to use the decoder, met
 
 ## The backbone contract
 
-A backbone is any `torch.nn.Module` whose `forward(x)` returns **`(B, T, C)` logits**, where `B` is batch,
-`T` is the number of epochs in the sequence, and `C = num_classes`. Input shape is up to the backbone; the
+A backbone is any `torch.nn.Module` whose `forward(x)` returns **`(B, T, C)` logits**, where `B` is the batch size,
+`T` is the number of epochs in the sequence, and `C = num_classes`. The input shape depends on the backbone; the
 two bundled CNNs accept `(B, T, in_channels, epoch_samples)`.
 
 ```python

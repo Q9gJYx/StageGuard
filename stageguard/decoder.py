@@ -43,7 +43,7 @@ class SemiMarkovDecoder:
         self.d_min = config.d_min if config.d_min else [1] * config.num_classes
         self.rare_transitions = set(config.rare_transitions)
 
-        # Build augmented transition table
+        # Build the augmented transition table
         self._build_transitions()
 
     def _aug_index(self, s_prev: int, s: int, d: int) -> int:
@@ -158,7 +158,7 @@ class SemiMarkovDecoder:
         for t in range(T - 2, -1, -1):
             aug_path[t] = backptr[t + 1, aug_path[t + 1]]
 
-        # Extract stage labels from augmented states
+        # Extract stage labels from the augmented states
         return np.array([self._aug_stage(idx) for idx in aug_path])
 
     def decode_batch(
